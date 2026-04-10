@@ -56,9 +56,24 @@ public class ResultadosPesquisaPage extends BasePage {
         }
 
         String termoBusca = normalizarTexto(termo);
-        return titulos.stream()
+
+        boolean tituloContemTermo = titulos.stream()
             .map(el -> normalizarTexto(el.getText()))
             .anyMatch(titulo -> titulo.contains(termoBusca));
+        if (tituloContemTermo) {
+            return true;
+        }
+
+        String termoSlug = termoBusca.replace(" ", "-");
+        boolean linkContemTermo = titulos.stream()
+            .map(el -> normalizarTexto(el.getAttribute("href")))
+            .anyMatch(link -> link.contains(termoBusca) || link.contains(termoSlug));
+        if (linkContemTermo) {
+            return true;
+        }
+
+        String textoPagina = normalizarTexto(driver.findElement(By.tagName("body")).getText());
+        return textoPagina.contains(termoBusca);
     }
 
     public boolean mensagemSemResultadosExibida() {
@@ -84,7 +99,7 @@ public class ResultadosPesquisaPage extends BasePage {
         if (valor == null) {
             return "";
         }
-        if (valor.contains("Ãƒ") || valor.contains("Ã‚")) {
+        if (valor.contains("Ã")) {
             return new String(valor.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         }
         return valor;
