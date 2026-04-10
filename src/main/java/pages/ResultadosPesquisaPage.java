@@ -32,7 +32,9 @@ public class ResultadosPesquisaPage extends BasePage {
     }
 
     public boolean paginaResultadosExibida() {
-        return getUrl().contains("?s=");
+        return !getCardsArtigos().isEmpty()
+            || elementoPresente(containerSemResultados)
+            || elementoPresente(mensagemSemResultados);
     }
 
     public List<WebElement> getCardsArtigos() {

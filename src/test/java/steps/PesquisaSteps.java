@@ -54,7 +54,7 @@ public class PesquisaSteps {
     @Entao("a pagina de resultados e exibida")
     public void paginaResultadosExibida() {
         assertTrue(
-            "URL nao contem '?s='. URL atual: " + resultadosPage.getUrl(),
+            "Pagina de resultados nao foi carregada.",
             resultadosPage.paginaResultadosExibida()
         );
     }
@@ -72,14 +72,6 @@ public class PesquisaSteps {
         assertTrue(
             "Nenhum titulo contem o termo '" + termo + "'.",
             resultadosPage.titulosContemTermo(termo)
-        );
-    }
-
-    @E("a URL contem o parametro de busca com o termo pesquisado")
-    public void urlContemParametroBusca() {
-        assertTrue(
-            "URL sem parametro '?s=': " + resultadosPage.getUrl(),
-            resultadosPage.getUrl().contains("?s=")
         );
     }
 

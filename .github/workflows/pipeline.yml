@@ -55,13 +55,6 @@ jobs:
           BROWSER: ${{ matrix.browser }}
           HEADLESS: true
 
-      - name: Generate Allure Report
-        if: always()
-        uses: simple-elf/allure-report-action@v1
-        with:
-          allure_results: target/allure-results
-          gh_pages: allure-report
-
       - name: Publish Cucumber Report
         if: always()
         uses: actions/upload-artifact@v4

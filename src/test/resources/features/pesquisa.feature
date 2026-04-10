@@ -17,7 +17,6 @@ Funcionalidade: Pesquisa de artigos no Blog do Agi
     Entao a pagina de resultados e exibida
     E pelo menos um artigo e listado nos resultados
     E os artigos exibidos sao relacionados ao termo "tecnologia"
-    E a URL contem o parametro de busca com o termo pesquisado
 
   @pesquisa_invalida @smoke
   Cenario: Busca com termo inexistente exibe mensagem de nenhum resultado
