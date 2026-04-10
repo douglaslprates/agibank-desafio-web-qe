@@ -4,9 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.nio.charset.StandardCharsets;
-import java.text.Normalizer;
 import java.util.List;
+import java.util.Locale;
 
 public class ResultadosPesquisaPage extends BasePage {
 
@@ -55,10 +54,11 @@ public class ResultadosPesquisaPage extends BasePage {
             return false;
         }
 
-        String termoBusca = normalizarTexto(termo);
+        String termoBusca = termo == null ? "" : termo.toLowerCase(Locale.ROOT).trim();
 
         boolean tituloContemTermo = titulos.stream()
-            .map(el -> normalizarTexto(el.getText()))
+            .map(WebElement::getText)
+            .map(texto -> texto == null ? "" : texto.toLowerCase(Locale.ROOT).trim())
             .anyMatch(titulo -> titulo.contains(termoBusca));
         if (tituloContemTermo) {
             return true;
@@ -66,13 +66,14 @@ public class ResultadosPesquisaPage extends BasePage {
 
         String termoSlug = termoBusca.replace(" ", "-");
         boolean linkContemTermo = titulos.stream()
-            .map(el -> normalizarTexto(el.getAttribute("href")))
+            .map(el -> el.getAttribute("href"))
+            .map(link -> link == null ? "" : link.toLowerCase(Locale.ROOT).trim())
             .anyMatch(link -> link.contains(termoBusca) || link.contains(termoSlug));
         if (linkContemTermo) {
             return true;
         }
 
-        String textoPagina = normalizarTexto(driver.findElement(By.tagName("body")).getText());
+        String textoPagina = driver.findElement(By.tagName("body")).getText().toLowerCase(Locale.ROOT).trim();
         return textoPagina.contains(termoBusca);
     }
 
@@ -86,22 +87,5 @@ public class ResultadosPesquisaPage extends BasePage {
             !driver.findElements(containerSemResultados).isEmpty() ||
             !driver.findElements(mensagemSemResultados).isEmpty()
         );
-    }
-
-    private String normalizarTexto(String valor) {
-        String corrigido = corrigirMojibake(valor);
-        String semAcento = Normalizer.normalize(corrigido, Normalizer.Form.NFD)
-            .replaceAll("\\p{M}", "");
-        return semAcento.toLowerCase().trim();
-    }
-
-    private String corrigirMojibake(String valor) {
-        if (valor == null) {
-            return "";
-        }
-        if (valor.contains("Ã")) {
-            return new String(valor.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        }
-        return valor;
     }
 }

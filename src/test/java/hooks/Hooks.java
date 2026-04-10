@@ -16,8 +16,8 @@ public class Hooks {
 
     @Before(order = 0)
     public void inicializarDriver() {
-        String browser = System.getenv().getOrDefault("BROWSER", "chrome").toLowerCase();
-        boolean headless = Boolean.parseBoolean(System.getenv().getOrDefault("HEADLESS", "false"));
+        String browser = getConfig("browser", "BROWSER", "chrome").toLowerCase();
+        boolean headless = Boolean.parseBoolean(getConfig("headless", "HEADLESS", "true"));
 
         DRIVER.set(DriverFactory.createDriver(browser, headless));
         DRIVER.get().manage().window().maximize();
@@ -52,5 +52,19 @@ public class Hooks {
             throw new IllegalStateException("WebDriver nao foi inicializado para este cenario.");
         }
         return driver;
+    }
+
+    private String getConfig(String systemProperty, String envVar, String defaultValue) {
+        String fromProperty = System.getProperty(systemProperty);
+        if (fromProperty != null && !fromProperty.isBlank()) {
+            return fromProperty;
+        }
+
+        String fromEnv = System.getenv(envVar);
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv;
+        }
+
+        return defaultValue;
     }
 }
