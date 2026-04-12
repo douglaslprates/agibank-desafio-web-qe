@@ -15,6 +15,8 @@ public class HomePage extends BasePage {
     private String termoBuscaPendente;
 
     private static final String URL = "https://blog.agibank.com.br/";
+    private static final String URL_INSTITUCIONAL = URL + "institucional/";
+    private static final String URL_NOTICIAS = URL + "noticias/";
 
     private final By iconePesquisa = By.cssSelector(".ast-search-icon .astra-search-icon");
 
@@ -23,6 +25,10 @@ public class HomePage extends BasePage {
     private final By campoPesquisa = By.cssSelector(
         "#search-field, input.search-field[name='s'], input[type='search'][name='s']"
     );
+
+    private final By linkOAgibank = By.cssSelector("a[href*='/institucional/']");
+
+    private final By linkNoticias = By.cssSelector("a[href*='/noticias/']");
 
     public HomePage(WebDriver driver) {
         super(driver);
@@ -80,6 +86,56 @@ public class HomePage extends BasePage {
         }
     }
 
+    public void clicarMenuOAgibank() {
+        if (driver.getCurrentUrl() == null || driver.getCurrentUrl().equals("data:,")) {
+            abrir();
+        }
+
+        try {
+            WebElement link = obterPrimeiroElementoVisivel(linkOAgibank);
+            clicarViaJS(link);
+        } catch (Exception primeiroErro) {
+            try {
+                WebElement linkPorTexto = obterPrimeiroElementoVisivel(
+                    By.xpath("//a[contains(normalize-space(.), 'O Agibank')]")
+                );
+                clicarViaJS(linkPorTexto);
+            } catch (Exception segundoErro) {
+                driver.navigate().to(URL_INSTITUCIONAL);
+            }
+        }
+    }
+
+    public void clicarMenuNoticias() {
+        if (driver.getCurrentUrl() == null || driver.getCurrentUrl().equals("data:,")) {
+            abrir();
+        }
+
+        try {
+            WebElement link = obterPrimeiroElementoVisivel(linkNoticias);
+            clicarViaJS(link);
+        } catch (Exception primeiroErro) {
+            try {
+                WebElement linkPorTexto = obterPrimeiroElementoVisivel(
+                    By.xpath("//a[contains(normalize-space(.), 'Notícias') or contains(normalize-space(.), 'Noticias')]")
+                );
+                clicarViaJS(linkPorTexto);
+            } catch (Exception segundoErro) {
+                driver.navigate().to(URL_NOTICIAS);
+            }
+        }
+    }
+
+    private WebElement obterPrimeiroElementoVisivel(By locator) {
+        wait.until(d -> !d.findElements(locator).isEmpty());
+        for (WebElement elemento : driver.findElements(locator)) {
+            if (elemento.isDisplayed()) {
+                return elemento;
+            }
+        }
+        return driver.findElements(locator).get(0);
+    }
+
     private WebElement obterCampoPesquisaVisivel() {
         for (WebElement campo : driver.findElements(campoPesquisa)) {
             if (campo.isDisplayed()) {
@@ -89,3 +145,4 @@ public class HomePage extends BasePage {
         return null;
     }
 }
+

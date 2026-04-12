@@ -26,11 +26,14 @@ public class DriverFactory {
                         "--no-sandbox",
                         "--disable-dev-shm-usage",
                         "--disable-gpu",
+                        "--disable-extensions",
+                        "--disable-popup-blocking",
+                        "--remote-allow-origins=*",
                         "--window-size=1920,1080",
                         "--remote-debugging-port=0"
                     );
                     if (headless) {
-                        opts.addArguments("--headless=new");
+                        opts.addArguments("--headless");
                     }
                     yield new ChromeDriver(opts);
                 }
